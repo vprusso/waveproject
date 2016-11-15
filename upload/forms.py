@@ -3,5 +3,5 @@ from django import forms
 
 class DocumentForm(forms.Form):
     docfile = forms.FileField(
-        label='Select a file'
+        label='Please upload a comma separated file:'
     )

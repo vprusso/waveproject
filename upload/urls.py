@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from upload.views import list_files
+from . import views
 
 urlpatterns = [
-    url(r'^list_files/$', list_files, name='list_files'),
+    url(r'^list_files/$', views.list_files, name='list_files'),
 ]

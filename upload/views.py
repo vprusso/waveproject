@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from upload.models import Document
-from upload.forms import DocumentForm
+from .models import Document
+from .forms import DocumentForm
 
 
 def list_files(request):
@@ -29,4 +28,3 @@ def list_files(request):
         'upload/list_files.html',
         {'documents': documents, 'form': form}
     )
-
