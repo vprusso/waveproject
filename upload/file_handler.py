@@ -3,8 +3,9 @@ import datetime
 
 from .models import Document, DocumentEntry
 
-def handle_files(csv_file):
+def save_file_content_to_database(csv_file):
 
+    # TODO change this path to not be hardcoded
     path = "C:/Users/Asus/Desktop/projects/" + csv_file.name
     fout = open(path, 'wb')
     for chunk in csv_file.chunks():
@@ -34,6 +35,7 @@ def handle_files(csv_file):
             )
         entry.save()
     
+    calculate_total_expenses_per_month()
 
 def sanitize_date_format(date):
     # TODO (more date checking here....)
@@ -42,3 +44,18 @@ def sanitize_date_format(date):
 def sanitize_float_format(str_float_val):
     # TODO (more checking here...)
     return str_float_val.replace(',','')
+
+def calculate_total_expenses_per_month():
+
+    year_month_dict = {}
+    for instance in DocumentEntry.objects.all():
+        year_month = str(instance.date.year) + "-" + str(instance.date.month) 
+        if year_month not in year_month_dict:
+            year_month_dict[year_month] = instance.tax_amount + instance.pre_tax_amount
+        else:
+            year_month_dict[year_month] += instance.tax_amount + instance.pre_tax_amount            
+    print(year_month_dict)
+
+        #print(instance.date),
+        #print(instance.tax_amount)
+        #print(instance.pre_tax_amount)

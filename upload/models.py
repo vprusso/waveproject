@@ -9,7 +9,7 @@ class Document(models.Model):
 
     def get_filename(self):
         return os.path.basename(self.docfile.name)
-
+   
 
 class DocumentEntry(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
@@ -21,3 +21,8 @@ class DocumentEntry(models.Model):
     pre_tax_amount = models.FloatField(default=None)
     tax_name = models.CharField(max_length=250, default=None)
     tax_amount = models.FloatField(default=None)
+
+
+class MonthlyExpenditures(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    monthly_expenditure = models.FloatField(default=None)

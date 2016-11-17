@@ -9,6 +9,11 @@
         <!-- List of uploaded documents -->
         {% if documents %}
             <ul>
+            <!--
+                {% for entry in document_entries %}
+                    <h1> {{entry.category}} </h1>
+                {% endfor %}
+            -->
                 {% for document in documents %}
                     <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
                 {% endfor %}
