@@ -1,7 +1,15 @@
 from django import forms
 
 
-class DocumentForm(forms.Form):
+def validate_file_extension(value):
+        if not value.name.endswith('.csv'):
+            raise forms.ValidationError("Only CSV file is accepted")
+
+class UploadFileForm(forms.Form):
     docfile = forms.FileField(
-        label='Please upload a comma separated file:'
+        label='Select a CSV file to import:',
+        validators=[validate_file_extension]
     )
+    
+
+    

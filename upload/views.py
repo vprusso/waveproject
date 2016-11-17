@@ -1,23 +1,25 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from .models import Document
-from .forms import DocumentForm
+from .models import Document, DocumentEntry
+from .forms import UploadFileForm
+from .file_handler import handle_files
 
 
 def list_files(request):
     # Handle file upload
     if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            newdoc = Document(docfile=request.FILES['docfile'])
-            newdoc.save()
-
+            
+            handle_files(request.FILES['docfile'])
+            
             # Redirect to the document list after POST
             return HttpResponseRedirect(reverse('list_files'))
     else:
-        form = DocumentForm()  # A empty, unbound form
+        form = UploadFileForm()  # A empty, unbound form
 
     # Load documents for the list page
     documents = Document.objects.all()
