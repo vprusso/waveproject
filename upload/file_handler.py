@@ -41,21 +41,40 @@ def sanitize_date_format(date):
     # TODO (more date checking here....)
     return datetime.datetime.strptime(date, "%m/%d/%Y").strftime('%Y-%m-%d')
 
+
 def sanitize_float_format(str_float_val):
     # TODO (more checking here...)
-    return str_float_val.replace(',','')
+
+    str_float_val = str_float_val.replace(',', '')
+    str_float_val = dollars_to_cents(str_float_val)
+
+    return str_float_val
+
+
+def dollars_to_cents(dollars, truncate=True):
+    cents = float(dollars) * 100
+    if truncate:
+        return int(cents)
+    else:
+        return cents
+
+
+def cents_to_dollars(cents, truncate=True):
+    return float(cents) / 100
+
 
 def calculate_total_expenses_per_month():
-
+    """ """
     year_month_dict = {}
     for instance in DocumentEntry.objects.all():
         year_month = str(instance.date.year) + "-" + str(instance.date.month) 
         if year_month not in year_month_dict:
             year_month_dict[year_month] = instance.tax_amount + instance.pre_tax_amount
         else:
-            year_month_dict[year_month] += instance.tax_amount + instance.pre_tax_amount            
-    print(year_month_dict)
+            year_month_dict[year_month] += instance.tax_amount + instance.pre_tax_amount
 
-        #print(instance.date),
-        #print(instance.tax_amount)
-        #print(instance.pre_tax_amount)
+    # The costs are stored in terms of cents instead of dollars to eliminate floating
+    # point accuracy issues. We then need to convert back to dollars. 
+    year_month_dict = {k: cents_to_dollars(v) for k, v in year_month_dict.items()}        
+
+    return year_month_dict

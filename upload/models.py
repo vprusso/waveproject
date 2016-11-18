@@ -23,6 +23,6 @@ class DocumentEntry(models.Model):
     tax_amount = models.FloatField(default=None)
 
 
-class MonthlyExpenditures(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
-    monthly_expenditure = models.FloatField(default=None)
+#class MonthlyExpenditures(models.Model):
+#    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+#    monthly_expenditure = models.FloatField(default=None)

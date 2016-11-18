@@ -24,11 +24,13 @@ def list_files(request):
     # Load documents for the list page
     documents = Document.objects.all()
     document_entries = DocumentEntry.objects.all()
-    calculate_total_expenses_per_month()
+    
+    monthly_expenses = calculate_total_expenses_per_month()
 
     # Render list page with the documents and the form
     return render(
         request,
         'upload/list_files.html',
-        {'documents': documents, 'document_entries':document_entries, 'form': form}
+        {'documents': documents, 'document_entries':document_entries, 
+         'monthly_expenses': monthly_expenses, 'form': form}
     )

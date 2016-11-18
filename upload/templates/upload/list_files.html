@@ -8,12 +8,20 @@
     <body>
         <!-- List of uploaded documents -->
         {% if documents %}
-            <ul>
-            <!--
-                {% for entry in document_entries %}
-                    <h1> {{entry.category}} </h1>
-                {% endfor %}
-            -->
+            <table border="1">
+                <tr>
+                    <th>Month and Year</th>
+                    <th>Total Monthly Expenditure</th>
+                </tr>                 
+                   {% for key, value in monthly_expenses.items %}
+                   <tr>               
+                        <td> {{ key }} </td>
+                        <td> {{ value }} </td>
+                    </tr>
+                    {% endfor %}
+            </table>
+
+            <ul>                        
                 {% for document in documents %}
                     <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
                 {% endfor %}
