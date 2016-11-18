@@ -1,5 +1,7 @@
 import csv
 import datetime
+import dateutil.parser 
+import collections
 
 from .models import Document, DocumentEntry
 
@@ -35,12 +37,10 @@ def save_file_content_to_database(csv_file):
             )
         entry.save()
     
-    calculate_total_expenses_per_month()
 
-def sanitize_date_format(date):
-    # TODO (more date checking here....)
-    return datetime.datetime.strptime(date, "%m/%d/%Y").strftime('%Y-%m-%d')
-
+def sanitize_date_format(date):    
+    return dateutil.parser.parse(date).strftime('%Y-%m-%d')
+    
 
 def sanitize_float_format(str_float_val):
     # TODO (more checking here...)
@@ -59,7 +59,7 @@ def dollars_to_cents(dollars, truncate=True):
         return cents
 
 
-def cents_to_dollars(cents, truncate=True):
+def cents_to_dollars(cents):
     return float(cents) / 100
 
 
@@ -67,7 +67,7 @@ def calculate_total_expenses_per_month():
     """ """
     year_month_dict = {}
     for instance in DocumentEntry.objects.all():
-        year_month = str(instance.date.year) + "-" + str(instance.date.month) 
+        year_month = str(instance.date.year) + "-" + str('%02d' % instance.date.month) 
         if year_month not in year_month_dict:
             year_month_dict[year_month] = instance.tax_amount + instance.pre_tax_amount
         else:
@@ -76,5 +76,8 @@ def calculate_total_expenses_per_month():
     # The costs are stored in terms of cents instead of dollars to eliminate floating
     # point accuracy issues. We then need to convert back to dollars. 
     year_month_dict = {k: cents_to_dollars(v) for k, v in year_month_dict.items()}        
+
+    # Order in reverse chronological order
+    year_month_dict = collections.OrderedDict(sorted(year_month_dict.items()))
 
     return year_month_dict
