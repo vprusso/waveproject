@@ -60,7 +60,7 @@ def dollars_to_cents(dollars, truncate=True):
 
 
 def cents_to_dollars(cents):
-    return float(cents) / 100
+    return format(float(cents) / 100.0, '.2f')
 
 
 def calculate_total_expenses_per_month():

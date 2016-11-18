@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
         <title>File Upload</title>
+        <meta charset="utf-8">        
+    {% load staticfiles %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'upload/style.css' %}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
     </head>
 
     <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!-- Header -->
+                <a class="navbar-brand" href="{% url 'list_files' %}">Handy-Dandy Monthly Expenditure Calculator</a>                
+            </div>
+        </nav>
+
         <!-- List of uploaded documents -->
         {% if documents %}
-            <table border="1">
-                <tr>
-                    <th>Month and Year</th>
-                    <th>Total Monthly Expenditure</th>
-                </tr>                 
-                   {% for key, value in monthly_expenses.items %}
-                   <tr>               
-                        <td> {{ key }} </td>
-                        <td> {{ value }} </td>
-                    </tr>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Month and Year</th>
+                            <th>Total Monthly Expenditure</th>
+                        </tr>                 
+                    </thead>
+                    {% for key, value in monthly_expenses.items %}
+                        <tr>               
+                            <td> {{ key }} </td>
+                            <td> {{ value }} </td>
+                        </tr>
                     {% endfor %}
-            </table>
+                </table>
+            </div>
 
             <ul>                        
                 {% for document in documents %}
