@@ -7,10 +7,7 @@ import os
 class Document(models.Model):
     docfile = models.FileField(upload_to='documents')
 
-    def get_filename(self):
-        return os.path.basename(self.docfile.name)
    
-
 class DocumentEntry(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     date = models.DateField(default=datetime.now)
@@ -21,3 +18,18 @@ class DocumentEntry(models.Model):
     pre_tax_amount = models.FloatField(default=None)
     tax_name = models.CharField(max_length=250, default=None)
     tax_amount = models.FloatField(default=None)
+
+
+class MonthlyExpenditures(models.Model):
+    MONTH_CHOICES = ((1,"January"), (2, "February"), 
+                     (3, "March"), (4, "April"),
+                     (5, "May"), (6, "June"),
+                     (7, "July"), (8, "August"),
+                     (9, "September"), (10, "October"),
+                     (11, "November"), (12, "December") )    
+    month = models.IntegerField(choices=MONTH_CHOICES)
+    year = models.IntegerField()
+    monthly_expenditure = models.FloatField(default=None)
+
+
+

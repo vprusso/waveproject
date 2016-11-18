@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'upload.apps.UploadConfig',
-    #'upload',
+    'chartit',
 ]
 
 MIDDLEWARE_CLASSES = [

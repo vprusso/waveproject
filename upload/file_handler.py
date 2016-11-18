@@ -3,7 +3,7 @@ import datetime
 import dateutil.parser 
 import collections
 
-from .models import Document, DocumentEntry
+from .models import Document, DocumentEntry, MonthlyExpenditures
 
 def save_file_content_to_database(csv_file):
 
@@ -81,3 +81,14 @@ def calculate_total_expenses_per_month():
     year_month_dict = collections.OrderedDict(sorted(year_month_dict.items()))
 
     return year_month_dict
+
+def save_total_monthly_expenses_to_database(monthly_expenses):
+    for key, value in monthly_expenses.items():
+        d = key.split("-")
+        year = d[0]
+        month = d[1]
+        expense = MonthlyExpenditures(
+            month=month, year=year,
+            monthly_expenditure=value
+        )    
+        expense.save()
