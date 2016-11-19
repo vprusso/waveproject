@@ -41,7 +41,7 @@ def list_files(request):
     ds = DataPool(
             series=[{
                 'options': {
-                    'source': MonthlyExpenditures.objects.filter(year=2013)
+                    'source': MonthlyExpenditures.objects.all()
                 },
                 'terms': [
                     'month',
