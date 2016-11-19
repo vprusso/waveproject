@@ -1,14 +1,15 @@
 import csv
-import datetime
-import dateutil.parser 
+import dateutil.parser
 import collections
+import os
 
-from .models import Document, DocumentEntry, MonthlyExpenditures
+from .models import Document, DocumentEntry, MonthlyExpenditure
+from . import utils
 
 def save_file_content_to_database(csv_file):
 
     # TODO change this path to not be hardcoded
-    path = "C:/Users/Asus/Desktop/projects/" + csv_file.name
+    path = os.getcwd() + r'/' + csv_file.name
     fout = open(path, 'wb')
     for chunk in csv_file.chunks():
         fout.write(chunk)
@@ -68,8 +69,10 @@ def calculate_total_expenses_per_month():
     year_month_dict = {}
     for instance in DocumentEntry.objects.all():
         year_month = str(instance.date.year) + "-" + str('%02d' % instance.date.month) 
+
         if year_month not in year_month_dict:
             year_month_dict[year_month] = instance.tax_amount + instance.pre_tax_amount
+
         else:
             year_month_dict[year_month] += instance.tax_amount + instance.pre_tax_amount
 
@@ -82,12 +85,15 @@ def calculate_total_expenses_per_month():
 
     return year_month_dict
 
+
 def save_total_monthly_expenses_to_database(monthly_expenses):
     for key, value in monthly_expenses.items():
-        d = key.split("-")
-        year = d[0]
-        month = d[1]
-        expense = MonthlyExpenditures(
+        
+        year_month_split = key.split("-")        
+        year = year_month_split[0]
+        month = year_month_split[1]
+
+        expense = MonthlyExpenditure(
             month=month, year=year,
             monthly_expenditure=value
         )    

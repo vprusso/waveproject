@@ -20,7 +20,7 @@ class DocumentEntry(models.Model):
     tax_amount = models.FloatField(default=None)
 
 
-class MonthlyExpenditures(models.Model):
+class MonthlyExpenditure(models.Model):
     MONTH_CHOICES = (('1',"January"), ('2', "February"), 
                      ('3', "March"), ('4', "April"),
                      ('5', "May"), ('6', "June"),
