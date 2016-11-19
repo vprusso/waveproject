@@ -7,7 +7,7 @@ from chartit import DataPool, Chart
 from .models import Document, MonthlyExpenditure
 from .forms import UploadFileForm
 from .file_handler import save_file_content_to_database, calculate_total_expenses_per_month, save_total_monthly_expenses_to_database
-from .utils import month_name
+from .utils import DateHelper
 
 
 def list_files(request):
@@ -27,8 +27,9 @@ def list_files(request):
     # Load documents for the list page
     documents = Document.objects.all()
     monthly_expenses = calculate_total_expenses_per_month()
+    date_helper = DateHelper()
     # TODO UNCOMMENT
-    save_total_monthly_expenses_to_database(monthly_expenses)            
+    #save_total_monthly_expenses_to_database(monthly_expenses)
 
     #Step 1: Create a DataPool with the data we want to retrieve.
     # start_code
@@ -61,7 +62,7 @@ def list_files(request):
                 'text': 'Total expenditures per month (over all years)'
             }
         },
-        x_sortf_mapf_mts=(None, month_name, False)
+        x_sortf_mapf_mts=(None, date_helper.month_name, False)
     )
 
     # Render list page with the documents and the form
