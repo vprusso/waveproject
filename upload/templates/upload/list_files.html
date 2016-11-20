@@ -3,7 +3,7 @@
 
         <!-- Upload form. Note enctype attribute! -->
         <center>
-        <form class="form-horizontal" action="{% url "list_files" %}" method="post" enctype="multipart/form-data">
+        <form class="form-horizontal" action="{% url 'list_files' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
 
@@ -25,9 +25,21 @@
                     <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
                 {% endfor %}
             </ul>        
+
+            <form action="{% url 'list_files' %}" method='post'>
+                {% csrf_token %}
+                {{ year_form.as_p }}
+                <input type='submit' value='submit'>
+            </form>
+
+    
+
+            <!-- Display pie chart -->
             <div id='container'> 
                 Chart will be rendered here 
             </div>                
+
+            <!-- Display monthly expenditure table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>

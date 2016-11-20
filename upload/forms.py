@@ -1,4 +1,5 @@
 from django import forms
+from .models import MonthlyExpenditure
 
 
 def validate_file_extension(value):
@@ -10,4 +11,11 @@ class UploadFileForm(forms.Form):
     docfile = forms.FileField(
         label='Select a CSV file to import:',
         validators=[validate_file_extension]
+    )
+
+
+class SelectYearForm(forms.Form):
+    year = forms.ModelChoiceField(
+        queryset=MonthlyExpenditure.objects.all().values_list('year', flat=True).distinct(),
+        widget=forms.Select()
     )

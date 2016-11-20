@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from chartit import DataPool, Chart
 
 from .models import Document, MonthlyExpenditure
-from .forms import UploadFileForm
+from .forms import UploadFileForm, SelectYearForm
 from .file_handler import save_file_content_to_database, calculate_total_expenses_per_month, save_total_monthly_expenses_to_database
 from .utils import DateHelper
 
@@ -18,25 +18,37 @@ def list_files(request):
         if form.is_valid():
 
             save_file_content_to_database(request.FILES['docfile'])
+            monthly_expenses = calculate_total_expenses_per_month()
+            save_total_monthly_expenses_to_database(monthly_expenses)
 
             # Redirect to the document list after POST
             return HttpResponseRedirect(reverse('list_files'))
     else:
         form = UploadFileForm()  # A empty, unbound form
 
+    # Year form
+    year = None
+
+    if request.method == "POST":
+        year = request.POST['year']
+        year_form = SelectYearForm(request.POST)
+        if year_form.is_valid():
+            year = request.POST['year']
+    else:
+
+        year_form = SelectYearForm()
+
     # Load documents for the list page
     documents = Document.objects.all()
-    monthly_expenses = calculate_total_expenses_per_month()
     date_helper = DateHelper()
-    # TODO UNCOMMENT
-    #save_total_monthly_expenses_to_database(monthly_expenses)
 
-    #Step 1: Create a DataPool with the data we want to retrieve.
-    # start_code
+    monthly_expenses = calculate_total_expenses_per_month()
+
+    # Step 1: Create a DataPool with the data we want to retrieve.
     ds = DataPool(
         series=[{
             'options': {
-                'source': MonthlyExpenditure.objects.all()
+                'source': MonthlyExpenditure.objects.all().filter(year=year)
             },
             'terms': [
                 'year',
@@ -59,19 +71,18 @@ def list_files(request):
         }],
         chart_options={
             'title': {
-                'text': 'Total expenditures per month (over all years)'
+                'text': 'Total expenditures per month for ' + str(year)
             }
         },
         x_sortf_mapf_mts=(None, date_helper.month_name, False)
     )
+
+    ms = MonthlyExpenditure.objects.all()
 
     # Render list page with the documents and the form
     return render(
         request,
         'upload/list_files.html',
         {'documents': documents, 'monthly_expenses': monthly_expenses,
-         'form': form, 'expensechart': cht}
+         'form': form, 'expensechart': cht, 'ms': ms, 'year_form': year_form}
     )
-
-
-# TODO Have another form do work for chartting...
