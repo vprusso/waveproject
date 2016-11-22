@@ -40,12 +40,15 @@ def save_file_content_to_database(csv_file):
         )
         entry.save()
 
+    monthly_expenses = calculate_total_expenses_per_month(newdoc.id)
+    save_total_monthly_expenses_to_database(monthly_expenses, newdoc)
 
-def calculate_total_expenses_per_month():
+
+def calculate_total_expenses_per_month(document_id):
     """ """
     currency_helper = CurrencyHelper()
     year_month_dict = {}
-    for instance in DocumentEntry.objects.all():
+    for instance in DocumentEntry.objects.all().filter(document=document_id):
         year_month = str(instance.date.year) +\
             "-" + str('%02d' % instance.date.month)
 
@@ -71,7 +74,7 @@ def calculate_total_expenses_per_month():
     return year_month_dict
 
 
-def save_total_monthly_expenses_to_database(monthly_expenses):
+def save_total_monthly_expenses_to_database(monthly_expenses, document_object):
     """ """
     for key, value in monthly_expenses.items():
 
@@ -80,6 +83,7 @@ def save_total_monthly_expenses_to_database(monthly_expenses):
         month = year_month_split[1]
 
         expense = MonthlyExpenditure(
+            document=document_object,
             month=month, year=year,
             monthly_expenditure=value
         )

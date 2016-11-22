@@ -8,5 +8,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^upload/', include('upload.urls')),
-    url(r'^$', RedirectView.as_view(url='/upload/list_files/')),
+    url(r'^$', RedirectView.as_view(url='/upload/list_files')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

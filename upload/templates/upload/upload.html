@@ -22,12 +22,17 @@
     {% if documents %}
         <ul>                        
             {% for document in documents %}
-
-                <li><a href="/upload/details/{{ document.id }}">{{ document.id }}</a></li>
-
+                <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
             {% endfor %}
         </ul>        
+
         
+        <form action="{% url 'list_files' %}" method='post'>
+            {% csrf_token %}
+            {{ year_form.as_p }}
+            <input type='submit' value='submit'>
+        </form>
+    
     {% else %}
         <p>No documents.</p>            
     {% endif %}

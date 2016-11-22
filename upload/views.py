@@ -10,45 +10,25 @@ from .file_handler import save_file_content_to_database, calculate_total_expense
 from .utils import DateHelper
 
 
-def list_files(request):
-
-    # Handle file upload
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            save_file_content_to_database(request.FILES['docfile'])
-            monthly_expenses = calculate_total_expenses_per_month()
-            save_total_monthly_expenses_to_database(monthly_expenses)
-
-            # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('list_files'))
-    else:
-        form = UploadFileForm()  # A empty, unbound form
-
-    # Year form
+def details(request, document_id):
     year = None
-
     if request.method == "POST":
         year = request.POST['year']
         year_form = SelectYearForm(request.POST)
         if year_form.is_valid():
             year = request.POST['year']
+            #return HttpResponseRedirect(reverse('details'))
     else:
-
         year_form = SelectYearForm()
 
-    # Load documents for the list page
-    documents = Document.objects.all()
+    monthly_expenses = calculate_total_expenses_per_month(document_id)
     date_helper = DateHelper()
-
-    monthly_expenses = calculate_total_expenses_per_month()
 
     # Step 1: Create a DataPool with the data we want to retrieve.
     ds = DataPool(
         series=[{
             'options': {
-                'source': MonthlyExpenditure.objects.all().filter(year=year)
+                'source': MonthlyExpenditure.objects.all().filter(document=document_id,year=year)
             },
             'terms': [
                 'year',
@@ -77,12 +57,38 @@ def list_files(request):
         x_sortf_mapf_mts=(None, date_helper.month_name, False)
     )
 
-    ms = MonthlyExpenditure.objects.all()
+    ms = MonthlyExpenditure.objects.all().filter(document=document_id)
+
+    # Render list page with the documents and the form
+    return render(
+        request,
+        'upload/details.html',
+        {'monthly_expenses': monthly_expenses,
+         'expensechart': cht, 'ms': ms, 'year_form': year_form, 'document_id': document_id}
+    )        
+
+def list_files(request):
+
+    # Handle file upload
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            save_file_content_to_database(request.FILES['docfile'])
+
+            # Redirect to the document list after POST
+            return HttpResponseRedirect(reverse('list_files'))
+    else:
+        form = UploadFileForm()  # A empty, unbound form
+
+
+    # # Load documents for the list page
+    documents = Document.objects.all()
+
 
     # Render list page with the documents and the form
     return render(
         request,
         'upload/list_files.html',
-        {'documents': documents, 'monthly_expenses': monthly_expenses,
-         'form': form, 'expensechart': cht, 'ms': ms, 'year_form': year_form}
+        {'documents': documents, 'form': form}
     )
