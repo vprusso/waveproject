@@ -8,7 +8,7 @@
 {% block content %}
 
     <!-- Year select dropdown -->
-    <form action="{% url 'details' document_id=document_id %}" method='post'>
+    <form action="{% url 'details' document_id=document_id %}" method='get'>
         {% csrf_token %}
         {{ year_form.as_p }}
         <input type='submit' value='submit'>

@@ -9,15 +9,17 @@ from .forms import UploadFileForm, SelectYearForm
 from .file_handler import save_file_content_to_database, calculate_total_expenses_per_month, save_total_monthly_expenses_to_database
 from .utils import DateHelper
 
+# TODO: specify primary key as argument to pass
+
+
 
 def details(request, document_id):
     year = None
-    if request.method == "POST":
-        year = request.POST['year']
-        year_form = SelectYearForm(request.POST)
+    if request.method == 'GET':
+        year = request.GET.get('year')
+        year_form = SelectYearForm(request.GET)
         if year_form.is_valid():
-            year = request.POST['year']
-            #return HttpResponseRedirect(reverse('details'))
+            year = request.GET.get('year')
     else:
         year_form = SelectYearForm()
 
@@ -28,7 +30,8 @@ def details(request, document_id):
     ds = DataPool(
         series=[{
             'options': {
-                'source': MonthlyExpenditure.objects.all().filter(document=document_id,year=year)
+                'source': MonthlyExpenditure.objects.all().filter(
+                    document=document_id, year=year)
             },
             'terms': [
                 'year',
@@ -57,15 +60,15 @@ def details(request, document_id):
         x_sortf_mapf_mts=(None, date_helper.month_name, False)
     )
 
-    ms = MonthlyExpenditure.objects.all().filter(document=document_id)
-
     # Render list page with the documents and the form
     return render(
         request,
         'upload/details.html',
         {'monthly_expenses': monthly_expenses,
-         'expensechart': cht, 'ms': ms, 'year_form': year_form, 'document_id': document_id}
-    )        
+         'expensechart': cht, 'year_form': year_form,
+         'document_id': document_id}
+    )
+
 
 def list_files(request):
 
@@ -81,10 +84,8 @@ def list_files(request):
     else:
         form = UploadFileForm()  # A empty, unbound form
 
-
-    # # Load documents for the list page
+    # Load documents for the list page
     documents = Document.objects.all()
-
 
     # Render list page with the documents and the form
     return render(
