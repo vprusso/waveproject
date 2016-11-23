@@ -14,7 +14,7 @@ def save_file_content_to_database(csv_file):
         fout.write(chunk)
     fout.close()
 
-    newdoc = Document(docfile=path)
+    newdoc = Document(docfile=path, name=csv_file.name)
     newdoc.save()
 
     sanitize = SanitizeInput()

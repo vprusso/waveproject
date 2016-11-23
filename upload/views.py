@@ -6,22 +6,27 @@ from chartit import DataPool, Chart
 
 from .models import Document, MonthlyExpenditure
 from .forms import UploadFileForm, SelectYearForm
+
 from .file_handler import save_file_content_to_database, calculate_total_expenses_per_month, save_total_monthly_expenses_to_database
 from .utils import DateHelper
-
-# TODO: specify primary key as argument to pass
-
 
 
 def details(request, document_id):
     year = None
-    if request.method == 'GET':
-        year = request.GET.get('year')
-        year_form = SelectYearForm(request.GET)
-        if year_form.is_valid():
-            year = request.GET.get('year')
+    year_form = SelectYearForm(request.GET or None)
+    year = request.GET.get('year')
+    if year_form.is_valid():
+        year_form.save()
     else:
         year_form = SelectYearForm()
+
+    #if request.method == 'GET':
+    #    year = request.GET.get('year')
+    #    year_form = SelectYearForm(request.GET or None)
+    #    if year_form.is_valid():
+    #        year = request.GET.get('year')
+    #else:
+    #    year_form = SelectYearForm()
 
     monthly_expenses = calculate_total_expenses_per_month(document_id)
     date_helper = DateHelper()
@@ -30,7 +35,7 @@ def details(request, document_id):
     ds = DataPool(
         series=[{
             'options': {
-                'source': MonthlyExpenditure.objects.all().filter(
+                'source': MonthlyExpenditure.objects.filter(
                     document=document_id, year=year)
             },
             'terms': [
@@ -41,6 +46,7 @@ def details(request, document_id):
         }]
     )
 
+    cht_text = 'Total expenditures per month for ' + str(year) if year else ''
     cht = Chart(
         datasource=ds,
         series_options=[{
@@ -54,7 +60,7 @@ def details(request, document_id):
         }],
         chart_options={
             'title': {
-                'text': 'Total expenditures per month for ' + str(year)
+                'text': cht_text
             }
         },
         x_sortf_mapf_mts=(None, date_helper.month_name, False)

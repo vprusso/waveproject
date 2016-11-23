@@ -4,7 +4,10 @@ from datetime import datetime
 
 class Document(models.Model):
     docfile = models.FileField()
+    name = models.CharField(max_length=250)
 
+    def __str__(self):
+        return self.name
 
 class DocumentEntry(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
