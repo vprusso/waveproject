@@ -6,13 +6,16 @@ from .models import Document, DocumentEntry, MonthlyExpenditure
 from .utils import SanitizeInput, CurrencyHelper
 
 
-def save_file_content_to_database(csv_file):
-
-    path = os.getcwd() + r'/' + csv_file.name
+def write_csv_file(path, csv_file):
     fout = open(path, 'wb')
     for chunk in csv_file.chunks():
         fout.write(chunk)
     fout.close()
+
+
+def save_file_content_to_database(csv_file):
+    path = os.getcwd() + r'/' + csv_file.name
+    write_csv_file(path, csv_file)
 
     newdoc = Document(docfile=path, name=csv_file.name)
     newdoc.save()
@@ -45,7 +48,13 @@ def save_file_content_to_database(csv_file):
 
 
 def calculate_total_expenses_per_month(document_id):
-    """ """
+    """
+    For a given document, we process each row and sum the
+    tax amount and pre-tax amount to obtain a total amount per row.
+    The object returned is a dict where the first entry is the year
+    and month, and the second is the relative total amount.
+    """
+
     currency_helper = CurrencyHelper()
     year_month_dict = {}
     for instance in DocumentEntry.objects.all().filter(document=document_id):
@@ -75,7 +84,11 @@ def calculate_total_expenses_per_month(document_id):
 
 
 def save_total_monthly_expenses_to_database(monthly_expenses, document_object):
-    """ """
+    """
+    Given a specific uploaded document, calculates and stores the expenses
+    for each month.
+    """
+
     for key, value in monthly_expenses.items():
 
         year_month_split = key.split("-")

@@ -12,6 +12,12 @@ from .utils import DateHelper
 
 
 def details(request, document_id):
+    """
+    For each CSV file, user is presented with a dropdown populated with
+    potential years. Selecting a year will generate a pie chart of monthly
+    expenditures.
+    """
+
     year = None
     year_form = SelectYearForm(request.GET or None)
     year = request.GET.get('year')
@@ -20,18 +26,10 @@ def details(request, document_id):
     else:
         year_form = SelectYearForm()
 
-    #if request.method == 'GET':
-    #    year = request.GET.get('year')
-    #    year_form = SelectYearForm(request.GET or None)
-    #    if year_form.is_valid():
-    #        year = request.GET.get('year')
-    #else:
-    #    year_form = SelectYearForm()
-
     monthly_expenses = calculate_total_expenses_per_month(document_id)
     date_helper = DateHelper()
 
-    # Step 1: Create a DataPool with the data we want to retrieve.
+    # Create a DataPool with the year data we want to retrieve.
     ds = DataPool(
         series=[{
             'options': {
@@ -77,6 +75,9 @@ def details(request, document_id):
 
 
 def list_files(request):
+    """
+    Lists all uploaded CSV files.
+    """
 
     # Handle file upload
     if request.method == 'POST':

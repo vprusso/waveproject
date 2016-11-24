@@ -9,6 +9,7 @@ class Document(models.Model):
     def __str__(self):
         return self.name
 
+
 class DocumentEntry(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     date = models.DateField(default=datetime.now)
