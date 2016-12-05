@@ -14,7 +14,8 @@ def write_csv_file(path, csv_file):
 
 
 def save_file_content_to_database(csv_file):
-    path = os.getcwd() + r'/' + csv_file.name
+    path = os.getcwd() + r'/media/' + csv_file.name
+
     write_csv_file(path, csv_file)
 
     newdoc = Document(docfile=path, name=csv_file.name)

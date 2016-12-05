@@ -18,5 +18,6 @@ class SelectYearForm(forms.Form):
     year = forms.ModelChoiceField(
         label='Select a year to plot:',
         queryset=MonthlyExpenditure.objects.all().values_list('year', flat=True).distinct(),
+        empty_label=None,
         widget=forms.Select()
     )
